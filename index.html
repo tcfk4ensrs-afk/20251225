@@ -71,7 +71,7 @@
   <p id="status"></p>
 </div>
 
- <script>
+<script>
   // Firebase 設定
   const firebaseConfig = {
     apiKey: "AIzaSyDN0Bpaa_80Q34nc5Yfn9NzVa1OkdO6Iz0",
@@ -137,8 +137,13 @@
           windowStart = data.windowStart;
           users = data.users;
 
+          // 🔥 追加：windowStart が未来 → リセット
+          if (data.windowStart > now) {
+            windowStart = now;
+            users = [myId];
+          }
           // 🔥 1分経過 → 完全リセット
-          if (now - windowStart >= 60000) {
+          else if (now - windowStart >= 60000) {
             windowStart = now;
             users = [myId];
           }
@@ -196,7 +201,6 @@
     }
   });
 </script>
-
 
 </body>
 </html>
