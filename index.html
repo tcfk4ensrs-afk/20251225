@@ -79,12 +79,12 @@
     });
 
     // 🔥 ここでカウントダウン表示を開始
-    let remaining = Math.max(0, 10 - Math.floor((Date.now() - myWindowStart) / 1000));
-    statusEl.textContent = `10秒お待ちください… (${remaining})`;
+    let remaining = Math.max(0, 5 - Math.floor((Date.now() - myWindowStart) / 1000));
+    statusEl.textContent = `5秒お待ちください… (${remaining})`;
 
     const countdown = setInterval(() => {
       remaining--;
-      statusEl.textContent = `10秒お待ちください… (${remaining})`;
+      statusEl.textContent = `5秒お待ちください… (${remaining})`;
       if (remaining <= 0) clearInterval(countdown);
     }, 1000);
 
