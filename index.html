@@ -71,7 +71,7 @@
   <p id="status"></p>
 </div>
 
-<script>
+ <script>
   // Firebase 設定
   const firebaseConfig = {
     apiKey: "AIzaSyDN0Bpaa_80Q34nc5Yfn9NzVa1OkdO6Iz0",
@@ -99,19 +99,17 @@
   btn.addEventListener("click", async () => {
     const text = keywordInput.value.trim();
 
-    // 🔥 ①「おとしだま」なら即 3.html へ
+    // 即時遷移
     if (text === "おとしだま") {
       window.location.href = "3.html";
       return;
     }
 
-    // 🔥 ②「まーじゃん」以外はエラー
     if (text !== "まーじゃん") {
       statusEl.textContent = "キーワードが違います";
       return;
     }
 
-    // 🔥 ③ ここから従来のマッチング処理
     btn.disabled = true;
     keywordInput.disabled = true;
 
@@ -130,23 +128,30 @@
         users = [myId];
       } else {
         const data = doc.data();
-        windowStart = data.windowStart;
-        users = data.users || [];
 
-        // 🔥 追加：1分経過したら自動リセット
-        if (now - windowStart >= 60000) {
+        // 🔥 データ破損対策（users が配列でない場合リセット）
+        if (typeof data.windowStart !== "number" || !Array.isArray(data.users)) {
           windowStart = now;
           users = [myId];
-        }
-        // 🔥 10秒経過したら新しい枠
-        else if (now - windowStart >= 10000) {
-          windowStart = now;
-          users = [myId];
-        }
-        // 🔥 同じ枠内
-        else {
-          if (!users.includes(myId)) {
-            users.push(myId);
+        } else {
+          windowStart = data.windowStart;
+          users = data.users;
+
+          // 🔥 1分経過 → 完全リセット
+          if (now - windowStart >= 60000) {
+            windowStart = now;
+            users = [myId];
+          }
+          // 🔥 5秒経過 → 新しい枠
+          else if (now - windowStart >= 5000) {
+            windowStart = now;
+            users = [myId];
+          }
+          // 🔥 同じ枠内
+          else {
+            if (!users.includes(myId)) {
+              users.push(myId);
+            }
           }
         }
       }
@@ -159,7 +164,7 @@
       });
     });
 
-    // 🔥 カウントダウン（5秒表示）
+    // 🔥 カウントダウン（5秒）
     let remaining = Math.max(0, 5 - Math.floor((Date.now() - myWindowStart) / 1000));
     statusEl.textContent = `5秒お待ちください… (${remaining})`;
 
@@ -169,8 +174,8 @@
       if (remaining <= 0) clearInterval(countdown);
     }, 1000);
 
-    // 受付終了まで待つ（10秒枠）
-    const waitMs = Math.max(0, 10000 - (Date.now() - myWindowStart));
+    // 🔥 5秒待つ
+    const waitMs = Math.max(0, 5000 - (Date.now() - myWindowStart));
     await new Promise(resolve => setTimeout(resolve, waitMs));
 
     const finalDoc = await ref.get();
@@ -191,6 +196,7 @@
     }
   });
 </script>
+
 
 </body>
 </html>
