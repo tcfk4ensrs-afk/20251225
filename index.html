@@ -12,6 +12,7 @@
 
 <h1>アクセスボタン</h1>
 <button id="accessBtn">アクセスする</button>
+<p id="status"></p>
 
 <script>
   // Firebase 設定（あなたのプロジェクトの値）
@@ -28,45 +29,88 @@
   const db = firebase.firestore();
 
   const btn = document.getElementById("accessBtn");
+  const statusEl = document.getElementById("status");
 
   btn.addEventListener("click", async () => {
+    btn.disabled = true;
+    statusEl.textContent = "マッチング中... 最大10秒お待ちください";
+
     const ref = db.collection("access").doc("counter");
+
+    // この人が属する「受付グループ」の開始時間を記録する変数
+    let myWindowStart = null;
+
+    // 1. トランザクションでカウント＋受付時間を更新
+    const now = Date.now();
 
     await db.runTransaction(async (transaction) => {
       const doc = await transaction.get(ref);
 
-      const now = Date.now();
-      let count = 1;
-      let lastTime = 0;
+      let windowStart;
+      let count;
 
-      if (doc.exists) {
+      if (!doc.exists) {
+        // 初回：新しい受付グループを開始
+        windowStart = now;
+        count = 1;
+      } else {
         const data = doc.data();
-        lastTime = data.timestamp ? data.timestamp.toMillis() : 0;
+        windowStart = data.windowStart;
+        count = data.count;
 
-        // 10秒以内ならカウントを増やす
-        if (now - lastTime < 10000) {
-          count = data.count + 1;
+        // 以前の受付開始から10秒経っていたら、新しい受付グループを開始
+        if (now - windowStart >= 10000) {
+          windowStart = now;
+          count = 1;
+        } else {
+          // まだ同じ10秒枠なので人数を増やす
+          count = count + 1;
         }
       }
 
-      // Firestore に更新
-      transaction.set(ref, {
-        count: count,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      });
+      myWindowStart = windowStart; // このユーザーが属するグループを記録
 
-      // 遷移先
-      if (count === 1) {
-        window.location.href = "1.html";
-      } else if (count === 2) {
-        window.location.href = "2.html";
-      } else {
-        window.location.href = "2.html"; // 3人目以降は2.htmlに飛ばす
-      }
+      transaction.set(ref, {
+        windowStart: windowStart,
+        count: count
+      });
     });
+
+    // 2. その受付グループの締め切り時間まで待つ
+    const waitMs = Math.max(0, 10000 - (Date.now() - myWindowStart));
+    await new Promise(resolve => setTimeout(resolve, waitMs));
+
+    // 3. 再度ドキュメントを読み取り、「自分のグループ」の最終人数を見る
+    const finalDoc = await ref.get();
+    if (!finalDoc.exists) {
+      // 想定外だけど、一応1人扱いにしておく
+      window.location.href = "1.html";
+      return;
+    }
+
+    const finalData = finalDoc.data();
+
+    // 自分が属している受付グループと同じか確認
+    if (finalData.windowStart !== myWindowStart) {
+      // もし別のグループに切り替わっていたら、
+      // 自分のグループの締め切りは終わっているので、
+      // この時点では finalData は新グループ。ここでは1人扱いでもいいし、
+      // 安全のため 1.html に飛ばすことにする
+      window.location.href = "1.html";
+      return;
+    }
+
+    const finalCount = finalData.count;
+
+    if (finalCount === 1) {
+      // 10秒以内に自分だけ
+      window.location.href = "1.html";
+    } else {
+      // 10秒以内に2人以上いた → 全員2.html
+      window.location.href = "2.html";
+    }
   });
 </script>
 
 </body>
 </html>
-
