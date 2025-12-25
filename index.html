@@ -40,7 +40,6 @@
 
   btn.addEventListener("click", async () => {
     btn.disabled = true;
-    statusEl.textContent = "マッチング中... 最大10秒お待ちください";
 
     const ref = db.collection("access").doc("counter");
     const now = Date.now();
@@ -54,7 +53,6 @@
       let users;
 
       if (!doc.exists) {
-        // 初回：新しい10秒枠を開始
         windowStart = now;
         users = [myId];
       } else {
@@ -62,12 +60,10 @@
         windowStart = data.windowStart;
         users = data.users || [];
 
-        // 10秒経過 → 新しい枠を開始
         if (now - windowStart >= 10000) {
           windowStart = now;
           users = [myId];
         } else {
-          // 同じ端末なら追加しない
           if (!users.includes(myId)) {
             users.push(myId);
           }
@@ -82,6 +78,16 @@
       });
     });
 
+    // 🔥 ここでカウントダウン表示を開始
+    let remaining = Math.max(0, 10 - Math.floor((Date.now() - myWindowStart) / 1000));
+    statusEl.textContent = `10秒お待ちください… (${remaining})`;
+
+    const countdown = setInterval(() => {
+      remaining--;
+      statusEl.textContent = `10秒お待ちください… (${remaining})`;
+      if (remaining <= 0) clearInterval(countdown);
+    }, 1000);
+
     // 受付終了まで待つ
     const waitMs = Math.max(0, 10000 - (Date.now() - myWindowStart));
     await new Promise(resolve => setTimeout(resolve, waitMs));
@@ -90,16 +96,13 @@
     const finalDoc = await ref.get();
     const finalData = finalDoc.data();
 
-    // 自分が属する枠と一致しているか確認
     if (finalData.windowStart !== myWindowStart) {
-      // もし枠が切り替わっていたら1人扱い
       window.location.href = "1.html";
       return;
     }
 
     const finalCount = finalData.users.length;
 
-    // 🎯 ここがあなたの要望通りの動作
     if (finalCount === 1) {
       window.location.href = "1.html";
     } else {
