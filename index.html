@@ -133,10 +133,18 @@
         windowStart = data.windowStart;
         users = data.users || [];
 
-        if (now - windowStart >= 10000) {
+        // 🔥 追加：1分経過したら自動リセット
+        if (now - windowStart >= 60000) {
           windowStart = now;
           users = [myId];
-        } else {
+        }
+        // 🔥 10秒経過したら新しい枠
+        else if (now - windowStart >= 10000) {
+          windowStart = now;
+          users = [myId];
+        }
+        // 🔥 同じ枠内
+        else {
           if (!users.includes(myId)) {
             users.push(myId);
           }
@@ -175,7 +183,8 @@
 
     const finalCount = finalData.users.length;
 
-    if (finalCount === 5) {
+    // 🔥 5人未満 → 1.html / 5人以上 → 2.html
+    if (finalCount < 5) {
       window.location.href = "1.html";
     } else {
       window.location.href = "2.html";
