@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>コミカル謎解き・導入画面（仮）</title>
+  <title>コミカル謎解き・導入画面（修正版）</title>
   <style>
     * {
       box-sizing: border-box;
@@ -148,41 +148,6 @@
       margin-top: 4px;
     }
 
-    .info-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 10px;
-      font-size: 13px;
-      margin-bottom: 22px;
-    }
-
-    .info-item {
-      background: #f9f9ff;
-      border-radius: 10px;
-      padding: 10px 12px;
-      border: 1px dashed #d0d4ff;
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .info-label {
-      font-size: 11px;
-      color: #777;
-      text-transform: uppercase;
-      letter-spacing: 0.12em;
-    }
-
-    .info-value {
-      font-weight: bold;
-      color: #333;
-    }
-
-    .info-note {
-      font-size: 11px;
-      color: #999;
-    }
-
     .button-row {
       display: flex;
       flex-wrap: wrap;
@@ -238,10 +203,6 @@
       .title-main {
         font-size: 24px;
       }
-      .title-row {
-        flex-direction: row;
-        align-items: flex-start;
-      }
       .button-row {
         justify-content: center;
       }
@@ -251,7 +212,6 @@
         margin-bottom: 6px;
       }
     }
-
   </style>
 </head>
 <body>
@@ -262,7 +222,6 @@
       <div class="title-row">
         <div class="title-icon">🧩</div>
         <div class="title-block">
-          <!-- ★ タイトルはここを書き換えてください -->
           <div class="title-label">TITLE</div>
           <div class="title-main">ここに謎解きタイトル（仮）が入ります</div>
           <div class="title-sub">※あとで本番タイトルに差し替えてください</div>
@@ -272,7 +231,6 @@
       <hr class="comic-line" />
 
       <div class="overview">
-        <!-- ★ 概要テキストはここを書き換えてください -->
         <p class="overview-line">
           <span class="speaker">あなた</span>
           「えっ、なんで私、こんなところで謎解いてるんですか？」
@@ -284,43 +242,25 @@
         </p>
         <p class="overview-line">
           出てくるのは、ちょっと抜けた登場人物たちと、ツッコミどころ多めの謎の数々。
-          しかし、笑ってばかりもいられない…（かもしれない）。
         </p>
         <p class="overview-line">
-          あなたのヒラメキとボケ殺し耐性で、  
-          すべての謎を解き明かしてください。
-        </p>
-        <p class="overview-small">
-          ※ここに本番用のストーリー導入テキストを差し込みできます。
+          あなたのヒラメキとボケ殺し耐性で、すべての謎を解き明かしてください。
         </p>
       </div>
 
-      <div class="info-grid">
-        <div class="info-item">
-          <div class="info-label">MODE</div>
-          <div class="info-value">ソロプレイ / 協力プレイどちらもOK（仮）</div>
-          <div class="info-note">※仕様に合わせて書き換えてください</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">PLAY TIME</div>
-          <div class="info-value">約 〇〇〜△△ 分（目安）</div>
-          <div class="info-note">※実際のボリュームにあわせて変更</div>
-        </div>
-        <div class="info-item">
-          <div class="info-label">DIFFICULTY</div>
-          <div class="info-value">★★★☆☆（ゆるめ・ひらめき系想定）</div>
-          <div class="info-note">※星の数や説明を自由に編集可能</div>
-        </div>
-      </div>
+      <!-- ★ MODE / PLAY TIME / DIFFICULTY を削除済み -->
 
       <div class="button-row">
         <div class="comic-note">
-          ※「スタート」ボタンの遷移先はシステムに合わせて設定してください。
+          ※「スタート」ボタンを押すと謎解きが始まります。
         </div>
+
         <button class="btn-sub" type="button">
           チュートリアルを見る（仮）
         </button>
-        <button class="btn-primary" type="button">
+
+        <!-- ★ 謎解きをはじめる → index.html に遷移 -->
+        <button class="btn-primary" type="button" onclick="location.href='index.html'">
           ▶ 謎解きをはじめる
         </button>
       </div>
