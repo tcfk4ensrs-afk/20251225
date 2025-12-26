@@ -1,74 +1,144 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <title>マッチングページ</title>
+  <title>キーワードマッチング</title>
 
   <!-- Firebase CDN -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
 
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
-      background: #f5f5f5;
-      padding: 40px;
-      text-align: center;
-    }
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    h1 {
-      margin-bottom: 10px;
-      font-size: 26px;
-    }
-    p.description {
-      color: #555;
-      margin-bottom: 25px;
-    }
-    input {
-      width: 80%;
-      padding: 12px;
-      font-size: 18px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      margin-bottom: 15px;
-    }
-    button {
-      padding: 12px 25px;
-      font-size: 18px;
-      border: none;
-      border-radius: 8px;
-      background: #0078ff;
-      color: white;
-      cursor: pointer;
-    }
-    button:disabled {
-      background: #aaa;
-    }
-    #status {
-      margin-top: 20px;
-      font-size: 18px;
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background: linear-gradient(135deg, #fff7c2, #ffe4f2);
       color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 32px 28px 28px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: "Match!";
+      position: absolute;
+      right: -20px;
+      top: -15px;
+      font-size: 60px;
+      color: rgba(0,0,0,0.05);
+      font-weight: 900;
+      transform: rotate(15deg);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #ffcc00;
+      color: #5a3b00;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .title-main {
+      font-size: 28px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      color: #333;
+      text-shadow: 0 2px 0 #ffe066;
+      margin-bottom: 10px;
+    }
+
+    .description {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 20px;
+    }
+
+    .input-box {
+      width: 100%;
+      padding: 14px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: 2px solid #ffd86b;
+      background: #fffdf5;
+      margin-bottom: 18px;
+    }
+
+    .btn-primary {
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 26px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #d94c4c;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #ff8787;
+      transform: translateY(1px);
+      box-shadow: 0 3px 0 #d94c4c;
+    }
+
+    .btn-primary:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #b53939;
+    }
+
+    #status {
+      margin-top: 18px;
+      font-size: 16px;
+      color: #444;
+      min-height: 24px;
     }
   </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>キーワードマッチング</h1>
-  <p class="description">キーワードを入力して開始してください。</p>
+<div class="wrapper">
+  <div class="card">
 
-  <input id="keyword" type="text" placeholder="キーワードを入力">
-  <br>
-  <button id="accessBtn">送信</button>
+    <div class="badge">MATCHING SYSTEM</div>
 
-  <p id="status"></p>
+    <div class="title-main">キーワードマッチング</div>
+    <p class="description">キーワードを入力して開始してください。</p>
+
+    <input id="keyword" class="input-box" type="text" placeholder="キーワードを入力">
+
+    <button id="accessBtn" class="btn-primary">送信</button>
+
+    <p id="status"></p>
+
+  </div>
 </div>
 
 <script>
@@ -129,7 +199,6 @@
       } else {
         const data = doc.data();
 
-        // 🔥 データ破損対策（users が配列でない場合リセット）
         if (typeof data.windowStart !== "number" || !Array.isArray(data.users)) {
           windowStart = now;
           users = [myId];
@@ -137,22 +206,18 @@
           windowStart = data.windowStart;
           users = data.users;
 
-          // 🔥 追加：windowStart が未来 → リセット
           if (data.windowStart > now) {
             windowStart = now;
             users = [myId];
           }
-          // 🔥 1分経過 → 完全リセット
           else if (now - windowStart >= 20000) {
             windowStart = now;
             users = [myId];
           }
-          // 🔥 5秒経過 → 新しい枠
           else if (now - windowStart >= 5000) {
             windowStart = now;
             users = [myId];
           }
-          // 🔥 同じ枠内
           else {
             if (!users.includes(myId)) {
               users.push(myId);
@@ -169,7 +234,7 @@
       });
     });
 
-    // 🔥 カウントダウン（5秒）
+    // カウントダウン
     let remaining = Math.max(0, 5 - Math.floor((Date.now() - myWindowStart) / 1000));
     statusEl.textContent = `5秒お待ちください… (${remaining})`;
 
@@ -179,7 +244,6 @@
       if (remaining <= 0) clearInterval(countdown);
     }, 1000);
 
-    // 🔥 5秒待つ
     const waitMs = Math.max(0, 5000 - (Date.now() - myWindowStart));
     await new Promise(resolve => setTimeout(resolve, waitMs));
 
@@ -193,7 +257,6 @@
 
     const finalCount = finalData.users.length;
 
-    // 🔥 5人未満 → 1.html / 5人以上 → 2.html
     if (finalCount < 5) {
       window.location.href = "1.html";
     } else {
