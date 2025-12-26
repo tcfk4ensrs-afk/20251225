@@ -143,7 +143,7 @@
             users = [myId];
           }
           // 🔥 1分経過 → 完全リセット
-          else if (now - windowStart >= 60000) {
+          else if (now - windowStart >= 20000) {
             windowStart = now;
             users = [myId];
           }
