@@ -5,21 +5,29 @@
 <title>クリア！</title>
 
 <style>
-  body {
+  * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
-    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+  }
+
+  body {
+    font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    background: linear-gradient(135deg, #fff7c2, #ffe4f2);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
     overflow: hidden;
-    text-align: center;
   }
 
   /* キラキラ背景アニメーション */
   .sparkle {
     position: absolute;
-    width: 4px;
-    height: 4px;
-    background: gold;
+    width: 5px;
+    height: 5px;
+    background: #ffdd55;
     border-radius: 50%;
     animation: sparkle 3s infinite ease-in-out;
     opacity: 0.8;
@@ -27,22 +35,33 @@
 
   @keyframes sparkle {
     0% { transform: scale(0.5); opacity: 0.3; }
-    50% { transform: scale(1.5); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 1; }
     100% { transform: scale(0.5); opacity: 0.3; }
   }
 
-  /* メインカード */
+  /* カード */
   .card {
-    position: relative;
-    margin: 120px auto 0;
-    padding: 40px 30px;
-    width: 85%;
-    max-width: 450px;
-    background: white;
+    background: #ffffff;
     border-radius: 20px;
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
-    border: 3px solid gold;
+    padding: 40px 30px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
     animation: fadeIn 1.2s ease-out;
+  }
+
+  .card::before {
+    content: "Clear!";
+    position: absolute;
+    right: -20px;
+    top: -10px;
+    font-size: 60px;
+    color: rgba(0,0,0,0.05);
+    font-weight: 900;
+    transform: rotate(15deg);
+    pointer-events: none;
   }
 
   @keyframes fadeIn {
@@ -50,39 +69,61 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
+  .badge {
+    display: inline-block;
+    background: #ffcc00;
+    color: #5a3b00;
+    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+
   h1 {
-    font-size: 36px;
+    font-size: 34px;
+    font-weight: 900;
     color: #d4a017;
-    margin-bottom: 10px;
-    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+    text-shadow: 0 2px 0 #ffe066;
+    margin-bottom: 12px;
   }
 
   p {
-    font-size: 20px;
-    color: #444;
-    margin-bottom: 25px;
+    font-size: 18px;
+    color: #555;
+    margin-bottom: 28px;
+    line-height: 1.6;
   }
 
   .btn {
     display: inline-block;
-    padding: 14px 30px;
-    background: linear-gradient(135deg, #ffd700, #ffb300);
+    padding: 12px 26px;
+    background: #ff6b6b;
     color: white;
-    font-size: 20px;
-    border-radius: 10px;
+    font-size: 16px;
+    border-radius: 999px;
     text-decoration: none;
-    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.6);
+    font-weight: bold;
+    box-shadow: 0 4px 0 #d94c4c;
     transition: 0.2s;
   }
 
   .btn:hover {
-    transform: scale(1.05);
+    background: #ff8787;
+    transform: translateY(1px);
+    box-shadow: 0 3px 0 #d94c4c;
+  }
+
+  .btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #b53939;
   }
 </style>
 </head>
 <body>
 
-<!-- キラキラをランダムに生成 -->
+<!-- キラキラ生成 -->
 <script>
   for (let i = 0; i < 60; i++) {
     const s = document.createElement("div");
@@ -96,10 +137,16 @@
 </script>
 
 <div class="card">
-  <h1>🎉 クリア！ 🎉</h1>
-  <p>おめでとうございます！<br>特別なページに到達しました。</p>
+  <div class="badge">SPECIAL CLEAR</div>
 
-  <a href="index.html" class="btn">戻る</a>
+  <h1>🎉 クリア！ 🎉</h1>
+
+  <p>
+    おめでとうございます！<br>
+    あなたは特別なクリア条件を達成しました。
+  </p>
+
+  <a href="index.html" class="btn">トップへ戻る</a>
 </div>
 
 </body>
