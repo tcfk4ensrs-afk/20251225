@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>コミカル謎解き・導入画面（仮）</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+      background: linear-gradient(135deg, #fff7c2, #ffe4f2);
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .wrapper {
+      width: 100%;
+      max-width: 900px;
+      padding: 20px;
+    }
+
+    .intro-card {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 32px 28px 28px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .intro-card::before {
+      content: "Nazo?";
+      position: absolute;
+      right: -20px;
+      top: -15px;
+      font-size: 60px;
+      color: rgba(0,0,0,0.05);
+      font-weight: 900;
+      transform: rotate(15deg);
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #ffcc00;
+      color: #5a3b00;
+      font-weight: bold;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .title-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .title-icon {
+      font-size: 40px;
+    }
+
+    .title-block {
+      flex: 1;
+    }
+
+    .title-label {
+      font-size: 12px;
+      color: #888;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+
+    .title-main {
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: 0.05em;
+      color: #333;
+      text-shadow: 0 2px 0 #ffe066;
+    }
+
+    .title-sub {
+      font-size: 13px;
+      color: #777;
+      margin-top: 4px;
+    }
+
+    .comic-line {
+      width: 100%;
+      margin: 18px 0 14px;
+      border: none;
+      border-top: 2px dashed #ffcc00;
+    }
+
+    .overview {
+      background: #fffaf1;
+      border-radius: 12px;
+      border: 2px solid #ffe2a6;
+      padding: 18px 18px 14px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .overview::before {
+      content: "Story";
+      position: absolute;
+      top: -13px;
+      left: 16px;
+      background: #fffaf1;
+      padding: 0 8px;
+      font-size: 11px;
+      color: #c48b00;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .overview-line {
+      font-size: 14px;
+      margin-bottom: 6px;
+      line-height: 1.7;
+    }
+
+    .overview-line span.speaker {
+      display: inline-block;
+      font-size: 12px;
+      background: #ffeb99;
+      padding: 1px 6px;
+      border-radius: 999px;
+      margin-right: 4px;
+      color: #6a4a00;
+    }
+
+    .overview-small {
+      font-size: 12px;
+      color: #777;
+      margin-top: 4px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 10px;
+      font-size: 13px;
+      margin-bottom: 22px;
+    }
+
+    .info-item {
+      background: #f9f9ff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      border: 1px dashed #d0d4ff;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .info-label {
+      font-size: 11px;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .info-value {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .info-note {
+      font-size: 11px;
+      color: #999;
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background: #ff6b6b;
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 22px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 0 #d94c4c;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #ff8787;
+      transform: translateY(1px);
+      box-shadow: 0 3px 0 #d94c4c;
+    }
+
+    .btn-primary:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #b53939;
+    }
+
+    .btn-sub {
+      background: transparent;
+      border-radius: 999px;
+      border: 1px dashed #999;
+      padding: 8px 14px;
+      font-size: 12px;
+      color: #666;
+      cursor: pointer;
+    }
+
+    .comic-note {
+      font-size: 11px;
+      color: #999;
+      margin-right: auto;
+    }
+
+    @media (max-width: 600px) {
+      .intro-card {
+        padding: 24px 16px 20px;
+      }
+      .title-main {
+        font-size: 24px;
+      }
+      .title-row {
+        flex-direction: row;
+        align-items: flex-start;
+      }
+      .button-row {
+        justify-content: center;
+      }
+      .comic-note {
+        text-align: center;
+        width: 100%;
+        margin-bottom: 6px;
+      }
+    }
+
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="intro-card">
+      <div class="badge">COMICAL PUZZLE GAME</div>
+
+      <div class="title-row">
+        <div class="title-icon">🧩</div>
+        <div class="title-block">
+          <!-- ★ タイトルはここを書き換えてください -->
+          <div class="title-label">TITLE</div>
+          <div class="title-main">ここに謎解きタイトル（仮）が入ります</div>
+          <div class="title-sub">※あとで本番タイトルに差し替えてください</div>
+        </div>
+      </div>
+
+      <hr class="comic-line" />
+
+      <div class="overview">
+        <!-- ★ 概要テキストはここを書き換えてください -->
+        <p class="overview-line">
+          <span class="speaker">あなた</span>
+          「えっ、なんで私、こんなところで謎解いてるんですか？」
+        </p>
+        <p class="overview-line">
+          気がつくと、あなたは謎だらけの世界に放り込まれていた――
+          けれど、世界の危機かと思いきや、どうやら事の発端は
+          「うっかりミス」レベルのポンコツ事件らしい。
+        </p>
+        <p class="overview-line">
+          出てくるのは、ちょっと抜けた登場人物たちと、ツッコミどころ多めの謎の数々。
+          しかし、笑ってばかりもいられない…（かもしれない）。
+        </p>
+        <p class="overview-line">
+          あなたのヒラメキとボケ殺し耐性で、  
+          すべての謎を解き明かしてください。
+        </p>
+        <p class="overview-small">
+          ※ここに本番用のストーリー導入テキストを差し込みできます。
+        </p>
+      </div>
+
+      <div class="info-grid">
+        <div class="info-item">
+          <div class="info-label">MODE</div>
+          <div class="info-value">ソロプレイ / 協力プレイどちらもOK（仮）</div>
+          <div class="info-note">※仕様に合わせて書き換えてください</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">PLAY TIME</div>
+          <div class="info-value">約 〇〇〜△△ 分（目安）</div>
+          <div class="info-note">※実際のボリュームにあわせて変更</div>
+        </div>
+        <div class="info-item">
+          <div class="info-label">DIFFICULTY</div>
+          <div class="info-value">★★★☆☆（ゆるめ・ひらめき系想定）</div>
+          <div class="info-note">※星の数や説明を自由に編集可能</div>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <div class="comic-note">
+          ※「スタート」ボタンの遷移先はシステムに合わせて設定してください。
+        </div>
+        <button class="btn-sub" type="button">
+          チュートリアルを見る（仮）
+        </button>
+        <button class="btn-primary" type="button">
+          ▶ 謎解きをはじめる
+        </button>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
