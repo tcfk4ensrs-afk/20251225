@@ -1,10 +1,122 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>1人目のページ</title>
+<meta charset="UTF-8">
+<title>惜しい！</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    background: linear-gradient(135deg, #fff7c2, #ffe4f2);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px 30px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 1s ease-out;
+  }
+
+  .card::before {
+    content: "Almost!";
+    position: absolute;
+    right: -20px;
+    top: -10px;
+    font-size: 60px;
+    color: rgba(0,0,0,0.05);
+    font-weight: 900;
+    transform: rotate(15deg);
+    pointer-events: none;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .badge {
+    display: inline-block;
+    background: #ffcc00;
+    color: #5a3b00;
+    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-size: 30px;
+    font-weight: 900;
+    color: #d46b00;
+    text-shadow: 0 2px 0 #ffe066;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 17px;
+    color: #555;
+    margin-bottom: 26px;
+    line-height: 1.6;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 26px;
+    background: #ff6b6b;
+    color: white;
+    font-size: 16px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #d94c4c;
+    transition: 0.2s;
+  }
+
+  .btn:hover {
+    background: #ff8787;
+    transform: translateY(1px);
+    box-shadow: 0 3px 0 #d94c4c;
+  }
+
+  .btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #b53939;
+  }
+</style>
 </head>
 <body>
-  <h1>あなたは1人目です！</h1>
+
+<div class="card">
+  <div class="badge">TRY AGAIN</div>
+
+  <h1>惜しい…！</h1>
+
+  <p>
+    あなたの答えは正しい…<br>
+    でも、まだ “何か” が足りません。<br><br>
+    この謎は、<strong>みんなで協力しないと解けない</strong>みたいです。
+  </p>
+
+  <a href="index.html" class="btn">もう一度チャレンジ</a>
+</div>
+
 </body>
 </html>
