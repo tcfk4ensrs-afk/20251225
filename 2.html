@@ -1,10 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <title>2人目のページ</title>
+<meta charset="UTF-8">
+<title>クリア！</title>
+
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: "Hiragino Sans", "Noto Sans JP", sans-serif;
+    background: linear-gradient(135deg, #fff8e1, #ffecb3);
+    overflow: hidden;
+    text-align: center;
+  }
+
+  /* キラキラ背景アニメーション */
+  .sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: gold;
+    border-radius: 50%;
+    animation: sparkle 3s infinite ease-in-out;
+    opacity: 0.8;
+  }
+
+  @keyframes sparkle {
+    0% { transform: scale(0.5); opacity: 0.3; }
+    50% { transform: scale(1.5); opacity: 1; }
+    100% { transform: scale(0.5); opacity: 0.3; }
+  }
+
+  /* メインカード */
+  .card {
+    position: relative;
+    margin: 120px auto 0;
+    padding: 40px 30px;
+    width: 85%;
+    max-width: 450px;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+    border: 3px solid gold;
+    animation: fadeIn 1.2s ease-out;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h1 {
+    font-size: 36px;
+    color: #d4a017;
+    margin-bottom: 10px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+  }
+
+  p {
+    font-size: 20px;
+    color: #444;
+    margin-bottom: 25px;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 14px 30px;
+    background: linear-gradient(135deg, #ffd700, #ffb300);
+    color: white;
+    font-size: 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    box-shadow: 0 4px 10px rgba(255, 193, 7, 0.6);
+    transition: 0.2s;
+  }
+
+  .btn:hover {
+    transform: scale(1.05);
+  }
+</style>
 </head>
 <body>
-  <h1>あなたは2人目です！</h1>
+
+<!-- キラキラをランダムに生成 -->
+<script>
+  for (let i = 0; i < 60; i++) {
+    const s = document.createElement("div");
+    s.className = "sparkle";
+    s.style.left = Math.random() * 100 + "vw";
+    s.style.top = Math.random() * 100 + "vh";
+    s.style.animationDelay = Math.random() * 3 + "s";
+    s.style.opacity = Math.random();
+    document.body.appendChild(s);
+  }
+</script>
+
+<div class="card">
+  <h1>🎉 クリア！ 🎉</h1>
+  <p>おめでとうございます！<br>特別なページに到達しました。</p>
+
+  <a href="index.html" class="btn">戻る</a>
+</div>
+
 </body>
 </html>
