@@ -125,6 +125,25 @@
   // ---- 10分後に自動リセット ----
   const RESET_TIME = 10 * 60 * 1000; // 10分
 
+  async function resetCounterIfNeeded() {
+    const lastReset = localStorage.getItem("lastResetTime");
+    const now = Date.now();
+
+    if (!lastReset || now - Number(lastReset) > RESET_TIME) {
+
+      // Firestore カウンターをリセット
+      const counterRef = doc(db, "meta", "counter");
+      await setDoc(counterRef, { count: 0 });
+
+      // deviceId もリセット
+      localStorage.removeItem("deviceId");
+      localStorage.removeItem("deviceTime");
+
+      // リセット時刻を保存
+      localStorage.setItem("lastResetTime", now);
+    }
+  }
+
   function getDeviceId() {
     const saved = localStorage.getItem("deviceId");
     const savedTime = localStorage.getItem("deviceTime");
@@ -136,7 +155,6 @@
       }
     }
 
-    // 新規発行
     const id = crypto.randomUUID();
     localStorage.setItem("deviceId", id);
     localStorage.setItem("deviceTime", Date.now());
@@ -181,19 +199,19 @@
   ];
 
   // ---- メイン処理 ----
- async function main() {
-  const deviceId = getDeviceId();
-  const order = await registerVisit(deviceId);
+  async function main() {
+    await resetCounterIfNeeded();
 
-  // 1〜8をループ
-  const index = (order - 1) % 8;
-  const data = messages[index];
+    const deviceId = getDeviceId();
+    const order = await registerVisit(deviceId);
 
-  document.getElementById("badge").textContent = data.badge;
-  document.getElementById("title").textContent = data.title;
-  document.getElementById("message").innerHTML = data.text;
-}
+    const index = (order - 1) % 8;
+    const data = messages[index];
 
+    document.getElementById("badge").textContent = data.badge;
+    document.getElementById("title").textContent = data.title;
+    document.getElementById("message").innerHTML = data.text;
+  }
 
   main();
 </script>
