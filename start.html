@@ -1,72 +1,200 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <h1 id="msg">読み込み中…</h1>
+<head>
+<meta charset="UTF-8">
+<title>Access Order Test</title>
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-      import { getFirestore, doc, getDoc, setDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<style>
+  body {
+    background: #faf7f2;
+    font-family: "Helvetica Neue", sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
 
-      // ★ あなたの Firebase 設定
-      const firebaseConfig = {
-        apiKey: "AIzaSyDN0Bpaa_80Q34nc5Yfn9NzVa1OkdO6Iz0",
-        authDomain: "project-5040932402734173095.firebaseapp.com",
-        projectId: "project-5040932402734173095",
-        storageBucket: "project-5040932402734173095.firebasestorage.app",
-        messagingSenderId: "985201726384",
-        appId: "1:985201726384:web:fa9cf4c2582b81d426fc75"
-      };
+  .card {
+    position: relative;
+    background: white;
+    padding: 40px 50px;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    animation: fadeIn 0.6s ease-out;
+    text-align: center;
+    width: 360px;
+  }
 
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
+  .card::before {
+    content: "Almost!";
+    position: absolute;
+    right: -20px;
+    top: -10px;
+    font-size: 60px;
+    color: rgba(0,0,0,0.05);
+    font-weight: 900;
+    transform: rotate(15deg);
+    pointer-events: none;
+  }
 
-      // ---- 端末IDを localStorage に保存 ----
-      function getDeviceId() {
-        let id = localStorage.getItem("deviceId");
-        if (!id) {
-          id = crypto.randomUUID();
-          localStorage.setItem("deviceId", id);
-        }
-        return id;
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .badge {
+    display: inline-block;
+    background: #ffcc00;
+    color: #5a3b00;
+    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-size: 30px;
+    font-weight: 900;
+    color: #d46b00;
+    text-shadow: 0 2px 0 #ffe066;
+    margin-bottom: 12px;
+  }
+
+  p {
+    font-size: 17px;
+    color: #555;
+    margin-bottom: 26px;
+    line-height: 1.6;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 26px;
+    background: #ff6b6b;
+    color: white;
+    font-size: 16px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #d94c4c;
+    transition: 0.2s;
+  }
+
+  .btn:hover {
+    background: #ff8787;
+    transform: translateY(1px);
+    box-shadow: 0 3px 0 #d94c4c;
+  }
+
+  .btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #b53939;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <div class="badge" id="badge">LOADING</div>
+  <h1 id="title">読み込み中…</h1>
+  <p id="message">しばらくお待ちください。</p>
+  <a href="index.html" class="btn">もう一度チャレンジ</a>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  // Firebase 設定
+  const firebaseConfig = {
+    apiKey: "AIzaSyDN0Bpaa_80Q34nc5Yfn9NzVa1OkdO6Iz0",
+    authDomain: "project-5040932402734173095.firebaseapp.com",
+    projectId: "project-5040932402734173095",
+    storageBucket: "project-5040932402734173095.firebasestorage.app",
+    messagingSenderId: "985201726384",
+    appId: "1:985201726384:web:fa9cf4c2582b81d426fc75"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ---- 10分後に自動リセット ----
+  const RESET_TIME = 10 * 60 * 1000; // 10分
+
+  function getDeviceId() {
+    const saved = localStorage.getItem("deviceId");
+    const savedTime = localStorage.getItem("deviceTime");
+
+    if (saved && savedTime) {
+      const elapsed = Date.now() - Number(savedTime);
+      if (elapsed < RESET_TIME) {
+        return saved;
       }
+    }
 
-      // ---- Firestore にアクセス順を登録 ----
-      async function registerVisit(deviceId) {
-        const visitRef = doc(db, "visits", deviceId);
-        const visitSnap = await getDoc(visitRef);
+    // 新規発行
+    const id = crypto.randomUUID();
+    localStorage.setItem("deviceId", id);
+    localStorage.setItem("deviceTime", Date.now());
+    return id;
+  }
 
-        // すでに登録済みならその order を返す
-        if (visitSnap.exists()) {
-          return visitSnap.data().order;
-        }
+  // ---- Firestore にアクセス順を登録 ----
+  async function registerVisit(deviceId) {
+    const visitRef = doc(db, "visits", deviceId);
+    const visitSnap = await getDoc(visitRef);
 
-        // 初回アクセス → トランザクションで順番を決める
-        const counterRef = doc(db, "meta", "counter");
+    if (visitSnap.exists()) {
+      return visitSnap.data().order;
+    }
 
-        const order = await runTransaction(db, async (tx) => {
-          const counterSnap = await tx.get(counterRef);
-          let current = counterSnap.exists() ? counterSnap.data().count : 0;
-          const newOrder = current + 1;
+    const counterRef = doc(db, "meta", "counter");
 
-          tx.set(counterRef, { count: newOrder });
-          tx.set(visitRef, { order: newOrder, createdAt: new Date() });
+    const order = await runTransaction(db, async (tx) => {
+      const counterSnap = await tx.get(counterRef);
+      let current = counterSnap.exists() ? counterSnap.data().count : 0;
+      const newOrder = current + 1;
 
-          return newOrder;
-        });
+      tx.set(counterRef, { count: newOrder });
+      tx.set(visitRef, { order: newOrder, createdAt: new Date() });
 
-        return order;
-      }
+      return newOrder;
+    });
 
-      // ---- メイン処理 ----
-      async function main() {
-        const deviceId = getDeviceId();
-        const order = await registerVisit(deviceId);
+    return order;
+  }
 
-        document.getElementById("msg").textContent =
-          `あなたは ${order} 番目の訪問者です`;
-      }
+  // ---- 8人分のメッセージ ----
+  const messages = [
+    { badge: "PLAYER 1", title: "最初の挑戦者！", text: "あなたがこの物語の幕を開けました。" },
+    { badge: "PLAYER 2", title: "続く者！", text: "あなたの一歩が、次の展開を呼びます。" },
+    { badge: "PLAYER 3", title: "三番手！", text: "チームの流れが少しずつ見えてきました。" },
+    { badge: "PLAYER 4", title: "折り返し！", text: "あなたの参加で半分が揃いました。" },
+    { badge: "PLAYER 5", title: "後半戦！", text: "ここから一気に加速していきます。" },
+    { badge: "PLAYER 6", title: "あと少し！", text: "ゴールが見えてきました。" },
+    { badge: "PLAYER 7", title: "ラスト目前！", text: "あなたの力が必要でした。" },
+    { badge: "PLAYER 8", title: "最後の鍵！", text: "全員が揃いました。次のステージへ進めます。" }
+  ];
 
-      main();
-    </script>
-  </body>
+  // ---- メイン処理 ----
+  async function main() {
+    const deviceId = getDeviceId();
+    const order = await registerVisit(deviceId);
+
+    const index = Math.min(order - 1, 7); // 8人まで
+    const data = messages[index];
+
+    document.getElementById("badge").textContent = data.badge;
+    document.getElementById("title").textContent = data.title;
+    document.getElementById("message").innerHTML = data.text;
+  }
+
+  main();
+</script>
+
+</body>
 </html>
