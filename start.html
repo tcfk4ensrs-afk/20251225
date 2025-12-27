@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h1 id="msg">読み込み中…</h1>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+      import { getFirestore, doc, getDoc, setDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+      // ★ あなたの Firebase 設定に書き換えてね
+      const firebaseConfig = {
+        apiKey: "YOUR_API_KEY",
+        authDomain: "YOUR_AUTH_DOMAIN",
+        projectId: "YOUR_PROJECT_ID",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      // ---- 端末IDを localStorage に保存 ----
+      function getDeviceId() {
+        let id = localStorage.getItem("deviceId");
+        if (!id) {
+          id = crypto.randomUUID();
+          localStorage.setItem("deviceId", id);
+        }
+        return id;
+      }
+
+      // ---- Firestore にアクセス順を登録 ----
+      async function registerVisit(deviceId) {
+        const visitRef = doc(db, "visits", deviceId);
+        const visitSnap = await getDoc(visitRef);
+
+        // すでに登録済みならその order を返す
+        if (visitSnap.exists()) {
+          return visitSnap.data().order;
+        }
+
+        // 初回アクセス → トランザクションで順番を決める
+        const counterRef = doc(db, "meta", "counter");
+
+        const order = await runTransaction(db, async (tx) => {
+          const counterSnap = await tx.get(counterRef);
+          let current = counterSnap.exists() ? counterSnap.data().count : 0;
+          const newOrder = current + 1;
+
+          tx.set(counterRef, { count: newOrder });
+          tx.set(visitRef, { order: newOrder, createdAt: new Date() });
+
+          return newOrder;
+        });
+
+        return order;
+      }
+
+      // ---- メイン処理 ----
+      async function main() {
+        const deviceId = getDeviceId();
+        const order = await registerVisit(deviceId);
+
+        document.getElementById("msg").textContent =
+          `あなたは ${order} 番目の訪問者です`;
+      }
+
+      main();
+    </script>
+  </body>
+</html>
