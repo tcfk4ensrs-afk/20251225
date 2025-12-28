@@ -104,7 +104,7 @@
 </head>
 <body>
 
-<div class="card">
+<div class="card" id="gameCard">
   <div class="badge">SECOND GAME</div>
 
   <h1>🧠 第二ゲーム：クイズ 🧠</h1>
@@ -116,6 +116,40 @@
 
   <a href="quiz.html" class="btn">クイズを始める</a>
 </div>
+
+<!-- Firestore 監視機能 -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDN0Bpaa_80Q34nc5Yfn9NzVa1OkdO6Iz0",
+    authDomain: "project-5040932402734173095.firebaseapp.com",
+    projectId: "project-5040932402734173095",
+    storageBucket: "project-5040932402734173095.firebasestorage.app",
+    messagingSenderId: "985201726384",
+    appId: "1:985201726384:web:269a972f648983c426fc75"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Firestore の game2 を監視
+  onSnapshot(doc(db, "games", "game2"), (snap) => {
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+    if (data.clear === true) {
+      const card = document.getElementById("gameCard");
+      card.innerHTML = `
+        <div class="badge">CLEAR</div>
+        <h1>🎉 第二ゲーム クリア！ 🎉</h1>
+        <p>「迎春」と書かれたしめ縄を探してスマホの上に置こう</p>
+        <a href="index.html" class="btn">トップへ戻る</a>
+      `;
+    }
+  });
+</script>
 
 </body>
 </html>
