@@ -21,25 +21,41 @@
       background: #ff6b6b;
       color: white;
       cursor: pointer;
+      margin: 10px;
     }
     button:hover {
       background: #ff8787;
+    }
+
+    /* リセットボタンだけ色を変える */
+    .reset {
+      background: #555;
+    }
+    .reset:hover {
+      background: #777;
     }
   </style>
 </head>
 <body>
 
-  <h1>第一ゲーム クリア判定</h1>
-  <p>ゲームをクリアしたら、下のボタンを押してください。</p>
+  <h1>ゲームクリア判定ページ</h1>
+  <p>クリアしたゲームのボタンを押してください。</p>
 
-  <button id="clearBtn">クリア！</button>
+  <button onclick="clearGame(1)">ゲーム1 クリア！</button>
+  <button onclick="clearGame(2)">ゲーム2 クリア！</button>
+  <button onclick="clearGame(3)">ゲーム3 クリア！</button>
+  <button onclick="clearGame(4)">ゲーム4 クリア！</button>
+
+  <hr style="margin: 30px 0;">
+
+  <button class="reset" onclick="resetAll()">全ゲームをリセット</button>
 
   <!-- Firebase SDK 読み込み -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    // あなたの Firebase 設定
+    // Firebase 設定
     const firebaseConfig = {
       apiKey: "AIzaSyDN0Bpaa_80Q34nc5Yfn9NzVa1OkdO6Iz0",
       authDomain: "project-5040932402734173095.firebaseapp.com",
@@ -49,16 +65,25 @@
       appId: "1:985201726384:web:269a972f648983c426fc75"
     };
 
-    // Firebase 初期化
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // クリアボタン処理
-    document.getElementById("clearBtn").onclick = async () => {
-      await setDoc(doc(db, "games", "game1"), {
+    // ゲーム番号に応じて Firestore に書き込む
+    window.clearGame = async (num) => {
+      await setDoc(doc(db, "games", `game${num}`), {
         clear: true
       });
-      alert("ゲーム1をクリアとして記録しました！");
+      alert(`ゲーム${num} をクリアとして記録しました！`);
+    };
+
+    // 全ゲームをリセット
+    window.resetAll = async () => {
+      await deleteDoc(doc(db, "games", "game1"));
+      await deleteDoc(doc(db, "games", "game2"));
+      await deleteDoc(doc(db, "games", "game3"));
+      await deleteDoc(doc(db, "games", "game4"));
+
+      alert("すべてのゲームをリセットしました！");
     };
   </script>
 
