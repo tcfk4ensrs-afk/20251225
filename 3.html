@@ -22,7 +22,6 @@
     overflow: hidden;
   }
 
-  /* キラキラ背景 */
   .sparkle {
     position: absolute;
     width: 5px;
@@ -39,7 +38,6 @@
     100% { transform: scale(0.5); opacity: 0.3; }
   }
 
-  /* カード */
   .card {
     background: #ffffff;
     border-radius: 20px;
@@ -123,7 +121,6 @@
 </head>
 <body>
 
-<!-- キラキラ生成 -->
 <script>
   for (let i = 0; i < 60; i++) {
     const s = document.createElement("div");
@@ -136,7 +133,7 @@
   }
 </script>
 
-<div class="card">
+<div class="card" id="gameCard">
   <div class="badge">FIRST GAME</div>
 
   <h1>🎲 第一ゲーム：サイコロ 🎲</h1>
@@ -149,6 +146,40 @@
 
   <a href="index.html" class="btn">トップへ戻る</a>
 </div>
+
+<!-- Firestore 監視機能 -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDN0Bpaa_80Q34nc5Yfn9NzVa1OkdO6Iz0",
+    authDomain: "project-5040932402734173095.firebaseapp.com",
+    projectId: "project-5040932402734173095",
+    storageBucket: "project-5040932402734173095.firebasestorage.app",
+    messagingSenderId: "985201726384",
+    appId: "1:985201726384:web:269a972f648983c426fc75"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Firestore の game1 を監視
+  onSnapshot(doc(db, "games", "game1"), (snap) => {
+    if (!snap.exists()) return;
+
+    const data = snap.data();
+    if (data.clear === true) {
+      const card = document.getElementById("gameCard");
+      card.innerHTML = `
+        <div class="badge">CLEAR</div>
+        <h1>🎉 クリアおめでとう！ 🎉</h1>
+        <p>周りを見て「甘雫」を探して！見つけたら真ん中のスマホの上に置いてみよう！</p>
+        <a href="index.html" class="btn">トップへ戻る</a>
+      `;
+    }
+  });
+</script>
 
 </body>
 </html>
