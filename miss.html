@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>ハズレ</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: "Yu Gothic", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    background: linear-gradient(135deg, #d7e8ff, #f0f4ff);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 40px 30px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+    position: relative;
+    overflow: hidden;
+    animation: fadeIn 1s ease-out;
+  }
+
+  .card::before {
+    content: "Miss...";
+    position: absolute;
+    right: -20px;
+    top: -10px;
+    font-size: 70px;
+    color: rgba(0,0,0,0.05);
+    font-weight: 900;
+    transform: rotate(15deg);
+    pointer-events: none;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .badge {
+    display: inline-block;
+    background: #b0b0b0;
+    color: #333;
+    font-weight: bold;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-size: 30px;
+    font-weight: 900;
+    color: #3b5b8a;
+    text-shadow: 0 2px 0 #d0e0ff;
+    margin-bottom: 18px;
+  }
+
+  p {
+    font-size: 17px;
+    color: #555;
+    margin-bottom: 26px;
+    line-height: 1.6;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 26px;
+    background: #6c8cd5;
+    color: white;
+    font-size: 16px;
+    border-radius: 999px;
+    text-decoration: none;
+    font-weight: bold;
+    box-shadow: 0 4px 0 #4a6bb0;
+    transition: 0.2s;
+  }
+
+  .btn:hover {
+    background: #89a6e6;
+    transform: translateY(1px);
+    box-shadow: 0 3px 0 #4a6bb0;
+  }
+
+  .btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 1px 0 #3a5a99;
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="gameCard">
+  <div class="badge">THIRD GAME</div>
+
+  <h1>💦 ハズレ…</h1>
+
+  <p>
+    観察力と捜索力がすごい！！<br>
+    でも、これはなんの関係もないよ<br><br>
+    <strong>ほかのものもよく見て探してみよう！</strong>
+  </p>
+
+  <a href="index.html" class="btn">トップへ戻る</a>
+</div>
+
+</body>
+</html>
